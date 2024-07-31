@@ -1,12 +1,8 @@
-const Form = ({className, form, children}) => {
+const Form = ({className, onSubmit, children}) => {
   return (
     <form
       className={`flex flex-col gap-2 ${className}`}
-      onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        form.handleSubmit()
-      }}
+      onSubmit={onSubmit}
     >
       {children}
     </form>
