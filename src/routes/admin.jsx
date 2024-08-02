@@ -2,7 +2,7 @@ import {createFileRoute, Link, Outlet, redirect} from '@tanstack/react-router'
 import {useQuery} from "@tanstack/react-query";
 import {verifyToken} from "../data/auth/authRepo.js";
 
-export const Route = createFileRoute('/app')({
+export const Route = createFileRoute('/admin')({
   component: App,
   loader: async ({context: {queryClient}}) => {
     const token = localStorage.getItem("token")
@@ -13,7 +13,13 @@ export const Route = createFileRoute('/app')({
     }
     try {
       const data = await verifyToken(token)
-      queryClient.setQueryData(['user'], data.user)
+      const user = data.user
+      if (user.role !== "admin") {
+        return redirect({
+          to: "/app"
+        })
+      }
+      queryClient.setQueryData(['user'], user)
     } catch (error) {
       localStorage.removeItem("token")
       throw redirect({

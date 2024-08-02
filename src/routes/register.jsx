@@ -1,9 +1,21 @@
-import {createLazyFileRoute, Link} from '@tanstack/react-router'
-import LoginForm from "../ui/auth/LoginForm.jsx";
+import {createFileRoute, Link, redirect} from '@tanstack/react-router'
 import RegisterForm from "../ui/auth/RegisterForm.jsx";
+import {verifyToken} from "../data/auth/authRepo.js";
 
-export const Route = createLazyFileRoute('/register')({
+export const Route = createFileRoute('/register')({
   component: Register,
+  loader: async ({context: {queryClient}}) => {
+    try {
+      const token = localStorage.getItem("token")
+      const data = await verifyToken(token)
+      queryClient.setQueryData(['user'], data.user)
+      return redirect({
+        to: "/app"
+      })
+    } catch (error) {
+      localStorage.removeItem("token")
+    }
+  }
 })
 
 function Register() {

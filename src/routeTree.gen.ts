@@ -13,41 +13,47 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RegisterImport } from './routes/register'
+import { Route as LoginImport } from './routes/login'
 import { Route as AppImport } from './routes/app'
+import { Route as AdminImport } from './routes/admin'
+import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
-const RegisterLazyImport = createFileRoute('/register')()
-const LoginLazyImport = createFileRoute('/login')()
-const AboutLazyImport = createFileRoute('/about')()
-const IndexLazyImport = createFileRoute('/')()
+const AppProfileLazyImport = createFileRoute('/app/profile')()
 
 // Create/Update Routes
 
-const RegisterLazyRoute = RegisterLazyImport.update({
+const RegisterRoute = RegisterImport.update({
   path: '/register',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
+} as any)
 
-const LoginLazyRoute = LoginLazyImport.update({
+const LoginRoute = LoginImport.update({
   path: '/login',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
-
-const AboutLazyRoute = AboutLazyImport.update({
-  path: '/about',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+} as any)
 
 const AppRoute = AppImport.update({
   path: '/app',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const AdminRoute = AdminImport.update({
+  path: '/admin',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
+
+const AppProfileLazyRoute = AppProfileLazyImport.update({
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any).lazy(() => import('./routes/app.profile.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
@@ -57,7 +63,14 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminImport
       parentRoute: typeof rootRoute
     }
     '/app': {
@@ -67,26 +80,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LoginLazyImport
+      preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
-      preLoaderRoute: typeof RegisterLazyImport
+      preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileLazyImport
+      parentRoute: typeof AppImport
     }
   }
 }
@@ -94,11 +107,11 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
-  AppRoute,
-  AboutLazyRoute,
-  LoginLazyRoute,
-  RegisterLazyRoute,
+  IndexRoute,
+  AdminRoute,
+  AppRoute: AppRoute.addChildren({ AppProfileLazyRoute }),
+  LoginRoute,
+  RegisterRoute,
 })
 
 /* prettier-ignore-end */
@@ -110,26 +123,33 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.jsx",
       "children": [
         "/",
+        "/admin",
         "/app",
-        "/about",
         "/login",
         "/register"
       ]
     },
     "/": {
-      "filePath": "index.lazy.jsx"
+      "filePath": "index.jsx"
+    },
+    "/admin": {
+      "filePath": "admin.jsx"
     },
     "/app": {
-      "filePath": "app.jsx"
-    },
-    "/about": {
-      "filePath": "about.lazy.jsx"
+      "filePath": "app.jsx",
+      "children": [
+        "/app/profile"
+      ]
     },
     "/login": {
-      "filePath": "login.lazy.jsx"
+      "filePath": "login.jsx"
     },
     "/register": {
-      "filePath": "register.lazy.jsx"
+      "filePath": "register.jsx"
+    },
+    "/app/profile": {
+      "filePath": "app.profile.lazy.jsx",
+      "parent": "/app"
     }
   }
 }
