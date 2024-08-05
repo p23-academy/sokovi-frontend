@@ -34,8 +34,8 @@ const LoginForm = () => {
 
   return (
     <Form className={"w-3/4"} onSubmit={mutation.mutate}>
-      <FormTextInput name={"email"} label={"Email"} type={"email"}/>
-      <FormPasswordInput name={"password"} label={"Šifra"}/>
+      <FormTextInput name={"email"} label={"Email"} type={"email"} dark={true} required={true}/>
+      <FormPasswordInput name={"password"} label={"Šifra"} dark={true} required={true}/>
       {error && <em className={"text-red-300"}>{handleAuthError(error)}</em>}
       <ButtonWhite className={"mt-2"} type="submit">Prijavi se</ButtonWhite>
     </Form>

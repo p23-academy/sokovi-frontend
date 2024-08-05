@@ -16,3 +16,16 @@ export const handleAuthError = (err) => {
   }
   return error
 }
+
+export const handleCategoryError = (err) => {
+  let error = ""
+  switch (err.code) {
+    case "categories/category-exists":
+      error = "Postoji već ta kategorija."
+      break
+    case "categories/name-too-long":
+      error = "Predugačko ime kategorije."
+      break
+  }
+  return error
+}
